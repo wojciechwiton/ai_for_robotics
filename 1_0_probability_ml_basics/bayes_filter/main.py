@@ -4,7 +4,6 @@ import pickle as pkl
 import numpy as np
 import BayesianFiltering
 
-
 class ProgrammaticError(Exception):
     """Exception raised when method gets called at a wrong time instance.
   Attributes:
@@ -16,7 +15,7 @@ class ProgrammaticError(Exception):
         print("\033[91mERROR: \x1b[0m {}".format(msg))
 
 
-data = pkl.load(open("data_1.pkl", 'rb'))
+data = pkl.load(open("data_1.pkl", 'rb'), encoding="Latin1")
 measurements = data[0, :]
 motions = data[1, :]
 
@@ -28,7 +27,7 @@ result = BayesianFiltering.run_bayes_filter(
     measurements, motions, plot_histogram=True)
 pkl.dump(result, open("result_bayes_1.pkl", 'wb'))
 
-data = pkl.load(open("data_2.pkl", 'rb'))
+data = pkl.load(open("data_2.pkl", 'rb'), encoding="Latin1")
 measurements = data[0, :]
 motions = data[1, :]
 

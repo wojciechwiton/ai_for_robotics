@@ -3,13 +3,15 @@
 import SamplePdf
 import numpy as np
 import os
+from numpy.random import uniform
+import pickle as pkl
 
 num_samples = 5000
 
 uni_samples = np.zeros(num_samples)
 
 # TODO: draw uniform samples
-# uni_samples = XXX
+uni_samples = uniform(size=num_samples)
 
 # create instance of our new PDF sampler
 my_pdf_sampler = SamplePdf.SamplePdf(num_samples)
