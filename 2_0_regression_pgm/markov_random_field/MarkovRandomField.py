@@ -4,7 +4,6 @@ import math
 from scipy.stats import multivariate_normal
 from sklearn import mixture
 
-
 class ImageSegmenter(object):
     beta = 1  # strength of the second order clique criteria
     threshold = 0.05  # convergence threshold
@@ -50,26 +49,39 @@ class ImageSegmenter(object):
         pass
 
     def singleton(self, i, j, label):
-        potential = 0.0
         #TODO: Calculate the singletone clique potential
+        potential = 0.0
+        value = self.features[i, j]
+        mean = self.label_mean[label]
+        covariance = self.label_covariance[label]
+        mv = multivariate_normal(mean, covariance)
+        potential = -np.log(mv.pdf(value))
         return potential
 
     def doubleton(self, i, j, label):
-        potential = 0.0
         #TODO: Calculate the doubleton clique potential
+        potential = 0.0
+        possible_i_indicies = [ii for ii in range(i - 1, i + 2) if (ii >= 0 and ii < self.image.shape[0])]
+        possible_j_indicies = [jj for jj in range(j - 1, j + 2) if (jj >= 0 and jj < self.image.shape[1])]
+        neighbourhood = [(x,y) for x in possible_i_indicies for y in possible_j_indicies]
+        for (n_i, n_j) in neighbourhood:
+            n_label = self.image_labels[n_i, n_j]
+            if label == n_label: potential -= self.beta
+            else: potential += self.beta
         return potential
 
     def calculateGlobalEnergy(self):
         energy = 0.0
-        singletons = 0.0
-        doubletons = 0.0
         #TODO: Calculate the energy of the whole image
-        energy = singletons + doubletons / 2.0
+        for i in range(self.image.shape[0]):
+            for j in range(self.image.shape[1]):
+                label = self.image_labels[i, j]
+                energy += self.calculateLocalEnergy(i, j, label)
         return energy
 
     def calculateLocalEnergy(self, i, j, label):
-        energy = 0.0
         #TODO: Calculate the energy of one pixel
+        energy = self.singleton(i, j, label) + self.doubleton(i, j, label) / 2
         return energy
 
     def displayCurrentLabels(self):
